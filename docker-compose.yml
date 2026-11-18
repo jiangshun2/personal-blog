@@ -23,6 +23,8 @@ services:
       # 首次初始化时自动建表并导入基础数据（按文件名顺序执行）
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./sql/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+      # 统一客户端字符集为 utf8mb4，避免初始化 SQL 中文乱码
+      - ./mysql/my.cnf:/etc/mysql/conf.d/blog.cnf:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
