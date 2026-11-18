@@ -1,18 +1,26 @@
 <template>
   <el-container class="admin-layout">
-    <!-- ==================== 侧边菜单 ==================== -->
-    <el-aside class="admin-aside" :width="collapsed ? '64px' : '220px'">
+    <!-- 移动端：抽屉打开时的遮罩 -->
+    <div v-if="isMobile && mobileOpen" class="admin-mask" @click="mobileOpen = false"></div>
+
+    <!-- ==================== 侧边菜单（桌面固定 / 移动端抽屉） ==================== -->
+    <el-aside
+      class="admin-aside"
+      :class="{ 'is-mobile': isMobile, 'is-open': mobileOpen }"
+      :width="isMobile ? '230px' : (collapsed ? '64px' : '220px')"
+    >
       <div class="admin-logo">
         <span class="admin-logo-mark">B</span>
-        <span v-if="!collapsed" class="admin-logo-text">博客管理后台</span>
+        <span v-if="!collapsed || isMobile" class="admin-logo-text">博客管理后台</span>
       </div>
 
       <el-menu
         :default-active="activeMenu"
-        :collapse="collapsed"
+        :collapse="collapsed && !isMobile"
         :collapse-transition="false"
         router
         class="admin-menu"
+        @select="handleMenuSelect"
       >
         <el-menu-item index="/admin/dashboard">
           <el-icon><DataLine /></el-icon>
@@ -40,7 +48,7 @@
         </el-menu-item>
       </el-menu>
 
-      <div v-if="!collapsed" class="admin-aside-footer">
+      <div v-if="!collapsed || isMobile" class="admin-aside-footer">
         <router-link to="/" class="admin-aside-link">← 返回前台</router-link>
       </div>
     </el-aside>
@@ -49,13 +57,25 @@
     <el-container class="admin-body">
       <el-header class="admin-header" height="60px">
         <div class="admin-header-left">
-          <button type="button" class="collapse-btn" :title="collapsed ? '展开菜单' : '收起菜单'" @click="collapsed = !collapsed">
+          <!-- 移动端：打开抽屉菜单 -->
+          <button type="button" class="mobile-menu-btn" aria-label="打开菜单" @click="mobileOpen = true">
+            <el-icon :size="20"><Expand /></el-icon>
+          </button>
+
+          <!-- 桌面端：折叠/展开侧边栏 -->
+          <button
+            type="button"
+            class="collapse-btn"
+            :title="collapsed ? '展开菜单' : '收起菜单'"
+            @click="collapsed = !collapsed"
+          >
             <el-icon :size="18">
               <Expand v-if="collapsed" />
               <Fold v-else />
             </el-icon>
           </button>
-          <el-breadcrumb separator="/">
+
+          <el-breadcrumb class="admin-breadcrumb" separator="/">
             <el-breadcrumb-item :to="{ path: '/admin/dashboard' }">后台</el-breadcrumb-item>
             <el-breadcrumb-item>{{ pageTitle }}</el-breadcrumb-item>
           </el-breadcrumb>
@@ -92,7 +112,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -103,8 +123,23 @@ const router = useRouter()
 const userStore = useUserStore()
 const siteStore = useSiteStore()
 
-/** 侧边栏是否收起 */
+/** 桌面端：侧边栏是否收起 */
 const collapsed = ref(false)
+/** 是否移动端（宽度 <= 768px） */
+const isMobile = ref(false)
+/** 移动端：抽屉菜单是否打开 */
+const mobileOpen = ref(false)
+
+/** 媒体查询对象，用于监听窗口宽度变化 */
+let mediaQuery = null
+
+/** 根据窗口宽度同步 isMobile；回到桌面端时关闭抽屉 */
+function syncViewport() {
+  isMobile.value = window.matchMedia('(max-width: 768px)').matches
+  if (!isMobile.value) {
+    mobileOpen.value = false
+  }
+}
 
 /** 当前高亮菜单：文章新建 / 编辑都高亮「文章管理」 */
 const activeMenu = computed(() => {
@@ -113,6 +148,23 @@ const activeMenu = computed(() => {
 })
 
 const pageTitle = computed(() => (route.meta && route.meta.title) || '管理后台')
+
+/** 移动端点击菜单项后自动关闭抽屉 */
+function handleMenuSelect() {
+  if (isMobile.value) {
+    mobileOpen.value = false
+  }
+}
+
+/** 路由变化时关闭移动端抽屉 */
+watch(
+  () => route.path,
+  () => {
+    if (isMobile.value) {
+      mobileOpen.value = false
+    }
+  }
+)
 
 function handleCommand(command) {
   if (command === 'front') {
@@ -143,5 +195,25 @@ onMounted(() => {
     userStore.fetchUserInfo().catch(() => {})
   }
   siteStore.fetchConfig()
+
+  // 监听视口变化，实现响应式切换
+  mediaQuery = window.matchMedia('(max-width: 768px)')
+  syncViewport()
+  if (mediaQuery.addEventListener) {
+    mediaQuery.addEventListener('change', syncViewport)
+  } else {
+    // 兼容旧版浏览器
+    mediaQuery.addListener(syncViewport)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (mediaQuery) {
+    if (mediaQuery.removeEventListener) {
+      mediaQuery.removeEventListener('change', syncViewport)
+    } else {
+      mediaQuery.removeListener(syncViewport)
+    }
+  }
 })
 </script>

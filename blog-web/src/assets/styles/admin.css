@@ -407,3 +407,196 @@
     justify-content: center;
   }
 }
+
+/* ============================================================
+   移动端适配：抽屉式侧边菜单 + 紧凑布局
+   ============================================================ */
+
+/* 移动端汉堡按钮：默认隐藏，仅移动端显示 */
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.mobile-menu-btn:hover {
+  background: #f1f4f9;
+}
+
+@media (max-width: 768px) {
+  /* ---- 顶栏 ---- */
+  .admin-header {
+    padding: 0 12px;
+  }
+
+  .admin-header-left {
+    flex: 1;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .collapse-btn {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+  }
+
+  .admin-breadcrumb {
+    display: none;
+  }
+
+  /* ---- 侧边栏改为抽屉 ---- */
+  .admin-aside.is-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 2100;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 6px 0 24px rgba(15, 23, 42, 0.2);
+  }
+
+  .admin-aside.is-mobile.is-open {
+    transform: none;
+  }
+
+  .admin-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 2050;
+    background: rgba(15, 23, 42, 0.45);
+    animation: admin-mask-in 0.2s ease;
+  }
+
+  @keyframes admin-mask-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ---- 内容区 ---- */
+  .admin-main {
+    padding: 12px;
+    overflow-x: hidden;
+  }
+
+  .admin-card {
+    padding: 14px;
+  }
+
+  .admin-page-title {
+    font-size: 18px;
+  }
+
+  .admin-page-desc {
+    font-size: 12px;
+  }
+
+  /* 工具栏 / 筛选区改为竖排，避免挤压 */
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .admin-toolbar-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .admin-toolbar-left > * {
+    width: 100%;
+  }
+
+  /* 仪表盘统计卡片：两列 */
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  /* 编辑器 / 封面 / 页脚按钮 */
+  .article-cover-preview {
+    width: 100%;
+    height: 140px;
+  }
+
+  .editor-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .editor-footer > * {
+    flex: 1 1 auto;
+  }
+
+  .admin-pagination {
+    justify-content: center;
+  }
+
+  /* 表格字号略小，横向可滚动 */
+  .admin-main .el-table {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main {
+    padding: 10px;
+  }
+
+  .admin-card {
+    padding: 12px;
+  }
+
+  /* 小屏也保持两列，避免卡片过高、滚动过长 */
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px;
+  }
+
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+}
