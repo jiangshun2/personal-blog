@@ -35,9 +35,28 @@
 - Redis 7.x
 - Node.js 18+ / npm
 
-## 快速开始
+## 快速开始（M1：后端骨架）
 
-编码阶段 M1 完成后补充。
+### 1. 准备数据库
+
+1. 启动本机 MySQL 8，依次执行：
+   - sql/schema.sql（建库 + 7 张表）
+   - sql/data.sql（初始化分类、标签、站点设置）
+2. 修改 blog-backend/src/main/resources/application.yml 中的 spring.datasource.username / password 为你本机的 MySQL 账号密码。
+
+### 2. 启动后端
+
+    cd blog-backend
+    mvn spring-boot:run
+
+启动后：
+- 服务地址：http://localhost:8080
+- 接口文档：http://localhost:8080/doc.html
+- 首次启动会自动创建管理员账号：admin / 123456
+
+### 3. 验证登录
+
+打开接口文档 http://localhost:8080/doc.html，在「认证管理 → 登录」里用 admin / 123456 测试，返回 code 为 0 且带 token 即表示成功。
 
 ## Git 提交规范
 
