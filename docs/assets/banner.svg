@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="55%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <circle cx="1010" cy="30" r="190" fill="#ffffff" opacity="0.08"/>
+  <circle cx="1120" cy="270" r="150" fill="#ffffff" opacity="0.06"/>
+  <circle cx="880" cy="250" r="90" fill="#ffffff" opacity="0.05"/>
+  <text x="80" y="126" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif" font-size="58" font-weight="bold" fill="#ffffff">个人博客系统</text>
+  <text x="82" y="176" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif" font-size="23" fill="#dbeafe">Spring Boot 3 · Vue 3 · MySQL · Redis · Docker</text>
+  <text x="82" y="222" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif" font-size="17" fill="#bfdbfe">前后端分离 · JWT 鉴权 · 多级缓存 · Lua 限流 · HTTPS 部署上线</text>
+</svg>
