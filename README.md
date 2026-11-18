@@ -42,7 +42,7 @@
 1. 启动本机 MySQL 8，依次执行：
    - sql/schema.sql（建库 + 7 张表）
    - sql/data.sql（初始化分类、标签、站点设置）
-2. 修改 blog-backend/src/main/resources/application.yml 中的 spring.datasource.username / password 为你本机的 MySQL 账号密码。
+2. 创建 blog-backend/src/main/resources/application-local.yml，写入你本机的数据库地址 / 账号 / 密码（结构参考 application.yml 里的 datasource）。该文件已被 .gitignore 忽略，不会上传到 GitHub。
 
 ### 2. 启动后端
 

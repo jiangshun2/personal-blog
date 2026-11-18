@@ -1,7 +1,10 @@
 # ============================================================
 # 个人博客系统后端配置
-# 开发环境默认配置；生产环境请新建 application-local.yml 覆盖
-# （该文件已被 .gitignore 忽略，不会提交到 Git）
+# 说明：
+#   - 本文件会提交到 Git，只放通用配置与占位值
+#   - 真实数据库密码等敏感信息放在 application-local.yml
+#     （该文件已被 .gitignore 忽略，不会上传到 GitHub）
+#   - 默认激活 local 环境，启动时自动加载 application-local.yml
 # ============================================================
 server:
   port: 8080
@@ -10,17 +13,21 @@ spring:
   application:
     name: blog-backend
 
+  # 默认激活 local 环境：会额外加载 application-local.yml
+  profiles:
+    active: local
+
   # 排除 Spring Security 默认内存用户自动配置：
   # 我们用 JWT + 自己实现的登录，不需要它生成随机密码
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
-  # MySQL 数据源（请改成你本机的账号密码）
+  # MySQL 数据源（占位默认值，实际以 application-local.yml 为准）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: "123456"
 
   # Redis（M1 只配置连接，M5 再启用缓存与限流）
   data:
