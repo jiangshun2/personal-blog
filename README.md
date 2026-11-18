@@ -94,3 +94,8 @@
 ## 许可证
 
 MIT
+## 部署上线
+
+阿里云 ECS 部署步骤见 [docs/部署上线文档.md](docs/部署上线文档.md)。
+
+配套文件：docker-compose.yml、blog-backend/Dockerfile、nginx/blog.conf、.env.example。

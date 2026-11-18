@@ -5,6 +5,7 @@
 #   - 真实数据库密码等敏感信息放在 application-local.yml
 #     （该文件已被 .gitignore 忽略，不会上传到 GitHub）
 #   - 默认激活 local 环境，启动时自动加载 application-local.yml
+#   - 生产环境（Docker）通过环境变量覆盖，不需要本文件里的密码
 # ============================================================
 server:
   port: 8080
@@ -17,19 +18,18 @@ spring:
   profiles:
     active: local
 
-  # 排除 Spring Security 默认内存用户自动配置：
-  # 我们用 JWT + 自己实现的登录，不需要它生成随机密码
+  # 排除 Spring Security 默认内存用户自动配置
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
-  # MySQL 数据源（占位默认值，实际以 application-local.yml 为准）
+  # MySQL 数据源（占位默认值，实际以 application-local.yml 或环境变量为准）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: "123456"
 
-  # Redis（M1 只配置连接，M5 再启用缓存与限流）
+  # Redis（本地开发在 application-local.yml 覆盖；生产用环境变量）
   data:
     redis:
       host: localhost
@@ -45,28 +45,22 @@ spring:
 # MyBatis-Plus 配置
 mybatis-plus:
   configuration:
-    # 下划线转驼峰：create_time -> createTime
     map-underscore-to-camel-case: true
-    # 开发阶段打印 SQL，方便观察与学习
+    # 开发阶段打印 SQL；生产可改为 org.apache.ibatis.logging.nologging.NoLoggingImpl
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-      # 逻辑删除字段与取值
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
-      # 主键策略：数据库自增
       id-type: auto
 
-# 自定义 JWT 配置
+# 自定义 JWT 配置（生产环境通过 BLOG_JWT_SECRET 环境变量覆盖）
 blog:
   jwt:
-    # 签名密钥（HS256 要求至少 32 字节；生产环境务必修改）
     secret: blog-jwt-secret-key-please-change-me-in-production-2026
-    # 令牌有效期（小时）
     expire-hours: 24
 
-# 日志
 logging:
   level:
     com.blog: debug

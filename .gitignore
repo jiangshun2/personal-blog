@@ -34,3 +34,9 @@ application-local.yml
 application-secret.yml
 .env
 .env.local
+
+# ========== 部署证书 / 密钥 ==========
+nginx/certs/
+*.pem
+*.key
+*.crt
