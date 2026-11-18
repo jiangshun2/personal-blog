@@ -40,3 +40,5 @@ nginx/certs/
 *.pem
 *.key
 *.crt
+deploy-bundle.tar.gz
+*.tar.gz

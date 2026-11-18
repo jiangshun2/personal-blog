@@ -15,6 +15,9 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
+      # 2G 内存服务器：限制 InnoDB 缓冲池、关闭 performance_schema 降低内存占用
+      - --innodb-buffer-pool-size=128M
+      - --performance-schema=OFF
     volumes:
       - mysql-data:/var/lib/mysql
       # 首次初始化时自动建表并导入基础数据（按文件名顺序执行）
