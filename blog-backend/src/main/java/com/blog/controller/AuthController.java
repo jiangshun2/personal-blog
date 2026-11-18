@@ -1,12 +1,15 @@
 package com.blog.controller;
 
+import com.blog.cache.RateLimitService;
 import com.blog.common.Result;
+import com.blog.common.util.IpUtil;
 import com.blog.dto.LoginRequest;
 import com.blog.service.UserService;
 import com.blog.vo.LoginVO;
 import com.blog.vo.UserInfoVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,16 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final RateLimitService rateLimitService;
 
     /**
      * 登录
      *
-     * @param request 用户名 + 密码
+     * <p>限流：同一 IP 每分钟最多 5 次，超限返回 code=4290，
+     * 防止暴力破解密码（Lua 脚本原子计数，见 RateLimitService）。
+     *
+     * @param request     用户名 + 密码
+     * @param httpRequest 用于获取客户端 IP
      * @return token 与用户信息
      */
-    @Operation(summary = "登录")
+    @Operation(summary = "登录", description = "限流：每 IP 每分钟 5 次")
     @PostMapping("/login")
-    public Result<LoginVO> login(@Valid @RequestBody LoginRequest request) {
+    public Result<LoginVO> login(@Valid @RequestBody LoginRequest request,
+                                 HttpServletRequest httpRequest) {
+        // 先限流，再校验账号密码
+        rateLimitService.checkLoginLimit(IpUtil.getClientIp(httpRequest));
         return Result.ok(userService.login(request));
     }
 
